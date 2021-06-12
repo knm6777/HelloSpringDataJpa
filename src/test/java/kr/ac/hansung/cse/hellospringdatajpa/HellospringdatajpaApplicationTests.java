@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,5 +49,48 @@ class HellospringdatajpaApplicationTests {
         assertEquals("OLED TV", newProduct.getName());
     }
 
+    @Test
+    @Order(4)
+    public void findByName() {
+        Product product = productRepository.findByName("Galaxy S21");
+        assertEquals("Galaxy S21", product.getName());
+    }
 
+    @Test
+    @Order(5)
+    public void findByNameContainingWithPaging() {
+
+        Pageable paging = PageRequest.of(0, 3);
+        List<Product> productList = productRepository.findByNameContaining("MacBook", paging);
+
+        System.out.println("====findByNameContainingWithPaging: Macbook=====");
+        for (Product product : productList) {
+            System.out.println("-->" + product.toString() );
+        }
+    }
+
+    @Test
+    @Order(6)
+    public void findByNameContainingWithPagingAndSort( ) {
+
+        Pageable paging = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+        List<Product> productList =
+                productRepository.findByNameContaining("Galaxy", paging);
+
+        System.out.println("===findByNameContainingWithPagingAndSort: Galaxy====");
+        for (Product product : productList) {
+            System.out.println("-->" + product.toString() );
+        }
+    }
+
+    @Test
+    @Order(7)
+    public void searchByNameUsingQuery() {
+        List<Product> productList= productRepository.searchByName("Air");
+
+        System.out.println(" ====searchByNameUsingQuery: Air======");
+        for (Product product : productList) {
+            System.out.println("-->" + product.toString() );
+        }
+    }
 }
